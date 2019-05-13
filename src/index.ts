@@ -5,6 +5,8 @@ import googleMaps = require('@google/maps');
 import bodyParser = require('body-parser');
 import express = require('express');
 import redis = require('redis');
+import swaggerUi = require('swagger-ui-express');
+import swaggerDocument = require('./swagger.json');
 
 const app = express();
 app.use(bodyParser.json());         // to support JSON-encoded bodies.
@@ -25,6 +27,9 @@ const redisClient = redis.createClient({
     // db: process.env.REDIS_DB || 'countries',
     // password: process.env.REDIS_PW || 'password',
 });
+
+app.use('/', swaggerUi.serve);
+app.get('/', swaggerUi.setup(swaggerDocument));
 
 app.get('/test_api_key', (req, res) => {
     res.status(200).send(process.env.GOOGLE_MAPS_API_KEY);

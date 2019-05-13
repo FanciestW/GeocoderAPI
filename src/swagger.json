@@ -1,0 +1,112 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "version": "1.0.0",
+        "title": "Geocoder API",
+        "description": "An API that will take a location and try to geocode it.",
+        "license": {
+            "name": "MIT",
+            "url": "https://opensource.org/licenses/MIT"
+        }
+    },
+    "host": "api.williamlin.tech",
+    "basePath": "/geocoder",
+    "tags": [
+        {
+            "name": "Country",
+            "description": "API to get country of location."
+        },
+        {
+            "name": "Geocode",
+            "description": "API for getting full Geocode data."
+        }
+    ],
+    "schemes": [
+        "https"
+    ],
+    "consumes": [
+        "application/x-www-form-urlencoded"
+    ],
+    "produces": [
+        "application/json",
+        "text/plain"
+    ],
+    "paths": {
+        "/country?location={location}": {
+            "get": {
+                "tags": [
+                    "Country"
+                ],
+                "summary": "API to get country of location.",
+                "description": "The country of the location with be returned. If unable to get country, 'No Results' will be returned.",
+                "produces": [
+                    "text/plain"
+                ],
+                "parameters": [
+                    {  
+                        "name":"location",
+                        "in":"query",
+                        "description":"Location string to geocode and get country of.",
+                        "required": true,
+                        "type":"string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The long name of the location's country.",
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error with Google Maps API.",
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/geocode?location={location}": {
+            "get": {
+                "tags": [
+                    "Geocode"
+                ],
+                "summary": "Gets Geocode JSON object",
+                "description": "Returns a JSON object returned by the Google Maps API.",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {  
+                        "name":"location",
+                        "in":"query",
+                        "description":"Location string to geocode and get country of.",
+                        "required": true,
+                        "type":"string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Google Geocode JSON object on the location given.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
