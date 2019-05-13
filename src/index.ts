@@ -24,8 +24,6 @@ const mapClient = googleMaps.createClient({
 const redisClient = redis.createClient({
     host: process.env.REDIS_HOST || '127.0.0.1',
     port: process.env.REDIS_PORT || 6379,
-    // db: process.env.REDIS_DB || 'countries',
-    // password: process.env.REDIS_PW || 'password',
 });
 
 app.use('/', swaggerUi.serve);
