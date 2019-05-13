@@ -31,11 +31,17 @@ const redisClient = redis.createClient({
 app.use('/', swaggerUi.serve);
 app.get('/', swaggerUi.setup(swaggerDocument));
 
-app.get('/test_api_key', (req, res) => {
-    res.status(200).send(process.env.GOOGLE_MAPS_API_KEY);
+app.get('/keys_test', (req, res) => {
+    const pattern = req.body.pattern || '*';
+    redisClient.keys(pattern, (err, keys) => {
+        if (err) {
+            res.status(500).send(err);
+        }
+        res.status(200).send(keys);
+    });
 });
 
-app.get('/test', (req, res) => {
+app.get('/country_test', (req, res) => {
     const location = req.query.location;
     if (!location) {
         res.status(400).send('Bad Request');
@@ -43,7 +49,6 @@ app.get('/test', (req, res) => {
     }
     redisClient.get(location, (redisErr, redisRes) => {
         if (redisErr || redisRes === null) {
-            console.log('Does not exist, using API');
             // Geocode an address.
             mapClient.geocode({
                 address: location,
@@ -56,7 +61,6 @@ app.get('/test', (req, res) => {
                     const addrComponents = mapRes.json.results[0].address_components;
                     const country = addrComponents[addrComponents.length - 1];
                     const longName = country.long_name;
-                    console.log(`Settings ${location} in redis`);
                     redisClient.set(location, longName);
                     res.status(200).send(`Settings ${location} in redis with ${longName}`);
                 } else {
@@ -64,7 +68,6 @@ app.get('/test', (req, res) => {
                 }
             });
         } else {
-            console.log(location + ' Exists already');
             res.status(200).send(`${location} exists already with value ${redisRes}`);
         }
     });
