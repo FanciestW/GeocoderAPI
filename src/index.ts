@@ -48,7 +48,7 @@ app.get('/keys_test', (req, res) => {
 });
 
 app.get('/country_test', (req, res) => {
-    ApiLogger.warn('Get /keys_test', {
+    ApiLogger.warn('Get /country_test', {
         timestamp: Date().toString(),
         requestIp: req.ip,
         requestHostname: req.hostname,
