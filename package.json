@@ -1,6 +1,6 @@
 {
   "name": "geocoderapi",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A web API for turning abstract location strings to more accurate location strings using Google Maps API.",
   "main": "index.js",
   "scripts": {
@@ -28,8 +28,10 @@
     "@google/maps": "^0.5.5",
     "@types/node": "^12.0.0",
     "express": "^4.16.4",
+    "logdna-winston": "^2.2.0",
     "redis": "^2.8.0",
-    "swagger-ui-express": "^4.0.2"
+    "swagger-ui-express": "^4.0.2",
+    "winston": "^3.2.1"
   },
   "devDependencies": {
     "nodemon": "^1.19.0",

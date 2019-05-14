@@ -8,7 +8,8 @@ services:
     image: fanciestw/geocoder:latest
     restart: always
     environment:
-      GOOGLE_MAPS_API_KEY: ${GOOGLE_MAPS_API_KEY}   # Replace with your key.
+      GOOGLE_MAPS_API_KEY: ${GOOGLE_MAPS_API_KEY}   # Replace with your Google Maps API key.
+      LOGDNA_API_KEY: ${LOGDNA_API_KEY}             # Replace with your logDNA key.
       REDIS_HOST: 10.5.0.7
       REDIS_PORT: 6379
     ports:
