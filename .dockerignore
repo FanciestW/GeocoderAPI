@@ -5,3 +5,4 @@ dist
 .git
 .gitignore
 ormconfig.json
+**/logs/

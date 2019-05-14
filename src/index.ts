@@ -6,6 +6,7 @@ import bodyParser = require('body-parser');
 import express = require('express');
 import redis = require('redis');
 import swaggerUi = require('swagger-ui-express');
+import { ApiLogger } from './Loggers';
 import swaggerDocument = require('./swagger.json');
 
 const app = express();
@@ -30,6 +31,13 @@ app.use('/', swaggerUi.serve);
 app.get('/', swaggerUi.setup(swaggerDocument));
 
 app.get('/keys_test', (req, res) => {
+    ApiLogger.warn('Get /keys_test', {
+        timestamp: Date().toString(),
+        requestIp: req.ip,
+        requestHostname: req.hostname,
+        reqeustBody: req.body,
+        requestQuery: req.query,
+    });
     const pattern = req.body.pattern || '*';
     redisClient.keys(pattern, (err, keys) => {
         if (err) {
@@ -40,6 +48,14 @@ app.get('/keys_test', (req, res) => {
 });
 
 app.get('/country_test', (req, res) => {
+    ApiLogger.warn('Get /keys_test', {
+        timestamp: Date().toString(),
+        requestIp: req.ip,
+        requestHostname: req.hostname,
+        reqeustBody: req.body,
+        requestQuery: req.query,
+        location: req.query.location,
+    });
     const location = req.query.location;
     if (!location) {
         res.status(400).send('Bad Request');
@@ -74,12 +90,26 @@ app.get('/country_test', (req, res) => {
 app.get('/country', (req, res) => {
     const location = req.query.location;
     if (!location) {
+        ApiLogger.error('Get /country error, no location provided', {
+            timestamp: Date().toString(),
+            requestIp: req.ip,
+            requestHostname: req.hostname,
+            reqeustBody: req.body,
+            requestQuery: req.query,
+        });
         res.status(400).send('Bad Request');
         return;
     }
+    ApiLogger.info('Get /country', {
+        timestamp: Date().toString(),
+        requestIp: req.ip,
+        requestHostname: req.hostname,
+        reqeustBody: req.body,
+        requestQuery: req.query,
+        location: req.query.location,
+    });
     redisClient.get(location, (redisErr, redisRes) => {
         if (redisErr || redisRes === null) {
-            // Geocode an address.
             mapClient.geocode({
                 address: location,
             }, (mapErr, mapRes) => {
@@ -94,6 +124,14 @@ app.get('/country', (req, res) => {
                     redisClient.set(location, longName);
                     res.status(200).send(longName);
                 } else {
+                    ApiLogger.error('Get /country Google Maps geocode error', {
+                        timestamp: Date().toString(),
+                        requestIp: req.ip,
+                        requestHostname: req.hostname,
+                        reqeustBody: req.body,
+                        requestQuery: req.query,
+                        location: req.query.location,
+                    });
                     res.status(500).send(mapErr);
                 }
             });
@@ -106,17 +144,39 @@ app.get('/country', (req, res) => {
 app.get('/geocode', (req, res) => {
     const location = req.query.location;
     if (location) {
-        // Geocode an address.
+        ApiLogger.info('Get /geocode', {
+            timestamp: Date().toString(),
+            requestIp: req.ip,
+            requestHostname: req.hostname,
+            reqeustBody: req.body,
+            requestQuery: req.query,
+            location: req.query.location,
+        });
         mapClient.geocode({
             address: location,
         }, (err, response) => {
             if (!err) {
                 res.status(200).send(response.json.results);
             } else {
+                ApiLogger.error('Get /geocode Google Maps geocode error', {
+                    timestamp: Date().toString(),
+                    requestIp: req.ip,
+                    requestHostname: req.hostname,
+                    reqeustBody: req.body,
+                    requestQuery: req.query,
+                    location: req.query.location,
+                });
                 res.status(500).send(err);
             }
         });
     } else {
+        ApiLogger.error('Get /geocode location not provided', {
+            timestamp: Date().toString(),
+            requestIp: req.ip,
+            requestHostname: req.hostname,
+            reqeustBody: req.body,
+            requestQuery: req.query,
+        });
         res.status(400).send('Bad Request');
     }
 });
