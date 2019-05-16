@@ -100,14 +100,6 @@ app.get('/country', (req, res) => {
         res.status(400).send('Bad Request');
         return;
     }
-    ApiLogger.info('Get /country', {
-        timestamp: Date().toString(),
-        requestIp: req.ip,
-        requestHostname: req.hostname,
-        reqeustBody: req.body,
-        requestQuery: req.query,
-        location: req.query.location,
-    });
     redisClient.get(location, (redisErr, redisRes) => {
         if (redisErr || redisRes === null) {
             mapClient.geocode({
@@ -144,14 +136,6 @@ app.get('/country', (req, res) => {
 app.get('/geocode', (req, res) => {
     const location = req.query.location;
     if (location) {
-        ApiLogger.info('Get /geocode', {
-            timestamp: Date().toString(),
-            requestIp: req.ip,
-            requestHostname: req.hostname,
-            reqeustBody: req.body,
-            requestQuery: req.query,
-            location: req.query.location,
-        });
         mapClient.geocode({
             address: location,
         }, (err, response) => {
