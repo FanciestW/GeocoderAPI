@@ -73,10 +73,16 @@ app.get('/country_test', (req, res) => {
                         res.status(200).send('No Results');
                     }
                     const addrComponents = mapRes.json.results[0].address_components;
-                    const country = addrComponents[addrComponents.length - 1];
-                    const longName = country.long_name;
+                    let country = null;
+                    for (const e of addrComponents) {
+                        if (e.types.includes('country')) {
+                            country = e;
+                            break;
+                        }
+                    }
+                    const longName = country.long_name ? country : 'No Results';
                     redisClient.set(location, longName);
-                    res.status(200).send(`Settings ${location} in redis with ${longName}`);
+                    res.status(200).send(longName);
                 } else {
                     res.status(500).send(mapErr);
                 }
@@ -85,6 +91,27 @@ app.get('/country_test', (req, res) => {
             res.status(200).send(`${location} exists already with value ${redisRes}`);
         }
     });
+});
+
+app.get('/remove_key_test', (req, res) => {
+    ApiLogger.error('Get /remove_key_test', {
+        timestamp: Date().toString(),
+        requestIp: req.ip,
+        requestHostname: req.hostname,
+        reqeustBody: req.body,
+        requestQuery: req.query,
+    });
+    const key = req.query.key;
+    redisClient.del(key, (err, response) => {
+        if (err) {
+            res.status(500).send('Error');
+        } else if (response !== 1) {
+            res.status(500).send(`${key} was not deleted.`);
+        } else {
+            res.status(200).send('OK');
+        }
+    });
+
 });
 
 app.get('/country', (req, res) => {
