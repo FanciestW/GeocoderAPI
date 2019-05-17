@@ -138,8 +138,14 @@ app.get('/country', (req, res) => {
                         res.status(200).send('No Results');
                     }
                     const addrComponents = mapRes.json.results[0].address_components;
-                    const country = addrComponents[addrComponents.length - 1];
-                    const longName = country.long_name;
+                    let country = null;
+                    for (const e of addrComponents) {
+                        if (e.types.includes('country')) {
+                            country = e;
+                            break;
+                        }
+                    }
+                    const longName = country ? country.long_name : 'No Results';
                     redisClient.set(location, longName);
                     res.status(200).send(longName);
                 } else {
