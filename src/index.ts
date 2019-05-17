@@ -80,7 +80,7 @@ app.get('/country_test', (req, res) => {
                             break;
                         }
                     }
-                    const longName = country.long_name ? country : 'No Results';
+                    const longName = country ? country.long_name : 'No Results';
                     redisClient.set(location, longName);
                     res.status(200).send(longName);
                 } else {
@@ -101,7 +101,7 @@ app.get('/remove_key_test', (req, res) => {
         reqeustBody: req.body,
         requestQuery: req.query,
     });
-    const key = req.query.key;
+    const key = req.query.key || req.query.location;
     redisClient.del(key, (err, response) => {
         if (err) {
             res.status(500).send('Error');
