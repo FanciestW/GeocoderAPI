@@ -53,7 +53,6 @@ const logDnaOptions = {
 /**
  * Logger object that is used in the main API logic module (index.ts)
  */
-console.log('Key: ' + logDnaKey);
 export const ApiLogger = logDnaKey ? createLogger({
     format: combine(
         timestamp(),
